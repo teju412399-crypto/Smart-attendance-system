@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Attendance - Expert System</title>
+<style>
+body{font-family:Arial;background:#f4f6f9;padding:20px}
+.card{background:#fff;padding:20px;border-radius:10px;max-width:600px;margin:auto;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+button{background:#007bff;color:#fff;border:none;padding:10px 15px;border-radius:5px;cursor:pointer;margin:5px}
+input{padding:10px;width:70%;border:1px solid #ddd;border-radius:5px}
+table{width:100%;border-collapse:collapse;margin-top:15px}
+th,td{border:1px solid #ddd;padding:8px;text-align:center}
+</style>
+</head>
+<body>
+<div class="card">
+<h2>Smart Attendance - Rule Based Expert System</h2>
+<input id="name" placeholder="Student Name">
+<button onclick="addStudent()">Add Student</button>
+<table id="tbl"><tr><th>Name</th><th>Present</th><th>Total</th><th>%</th><th>Status</th><th>Action</th></tr></table>
+</div>
+<script>
+let students=[];
+function getStatus(per){
+if(per>=75) return "Eligible";
+if(per>=60) return "Warning";
+return "Detained";
+}
+function addStudent(){
+let n=document.getElementById('name').value;
+if(!n) return alert("Name ivvu rey");
+students.push({name:n,present:0,total:0});
+document.getElementById('name').value='';
+render();
+}
+function mark(i, isPresent){
+students[i].total++;
+if(isPresent) students[i].present++;
+render();
+}
+function render(){
+let t=document.getElementById('tbl');
+t.innerHTML='<tr><th>Name</th><th>Present</th><th>Total</th><th>%</th><th>Status</th><th>Action</th></tr>';
+students.forEach((s,i)=>{
+let per=s.total?Math.round(s.present/s.total*100):0;
+let status=getStatus(per);
+let color=status=='Eligible'?'green':status=='Warning'?'orange':'red';
+t.innerHTML+=`<tr><td>${s.name}</td><td>${s.present}</td><td>${s.total}</td><td>${per}%</td><td style="color:${color};font-weight:bold">${status}</td><td><button onclick="mark(${i},1)">P</button><button onclick="mark(${i},0)">A</button></td></tr>`;
+});
+}
+</script>
+</body>
+</html>
